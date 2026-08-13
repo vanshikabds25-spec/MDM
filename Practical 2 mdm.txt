@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Profile</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-blue-700 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-5">
+
+            <h1 class="text-4xl font-bold text-center">
+                Student Profile
+            </h1>
+
+            <p class="text-center mt-2">
+                Professional Student Portfolio
+            </p>
+
+        </div>
+    </header>
+
+
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white">
+        <div class="container mx-auto">
+
+            <ul class="flex justify-center space-x-8 py-4 font-medium">
+
+                <li>
+                    <a href="#about" class="hover:text-yellow-300">
+                        About
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#education" class="hover:text-yellow-300">
+                        Education
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#skills" class="hover:text-yellow-300">
+                        Skills
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#hobbies" class="hover:text-yellow-300">
+                        Hobbies
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#contact" class="hover:text-yellow-300">
+                        Contact
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-6">
+
+        <!-- Profile Section -->
+        <section id="about"
+            class="bg-white rounded-xl shadow-lg p-8 flex flex-col md:flex-row gap-8 items-center">
+
+            <!-- Student Photo -->
+            <article>
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/3231/3231671.png"
+                    alt="Student Photo"
+                    class="w-64 h-64 rounded-full border-8 border-blue-600 object-cover">
+
+            </article>
+
+
+            <!-- Student Details -->
+            <article class="flex-1">
+
+                <h2 class="text-3xl font-bold text-blue-700 mb-4">
+                    Vanshika Balapure
+                </h2>
+
+                <p class="text-gray-700 leading-8">
+                    I am a passionate Computer Science student interested in
+                    Data Structures, Web Development, Artificial Intelligence,
+                    and Software Engineering. I enjoy learning new technologies
+                    and developing responsive web applications.
+                </p>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+
+                    <div>
+                        <p>
+                            <strong>Roll No :</strong> CD25058
+                        </p>
+
+                        <p>
+                            <strong>Gender :</strong> Female
+                        </p>
+
+                        <p>
+                            <strong>Date of Birth :</strong> 20/04/2007
+                        </p>
+                    </div>
+
+
+                    <div>
+                        <p>
+                            <strong>Course :</strong> CSE-DS
+                        </p>
+
+                        <p>
+                            <strong>Semester :</strong> III
+                        </p>
+
+                        <p>
+                            <strong>College :</strong> SBJIT Engineering College
+                        </p>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- Education -->
+        <section id="education"
+            class="bg-white rounded-xl shadow-lg p-8 mt-8">
+
+            <h2 class="text-3xl font-bold text-blue-700 mb-6">
+                Education Details
+            </h2>
+
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full border border-gray-300">
+
+                    <thead class="bg-blue-700 text-white">
+
+                        <tr>
+
+                            <th class="p-3 border">
+                                Qualification
+                            </th>
+
+                            <th class="p-3 border">
+                                Institute
+                            </th>
+
+                            <th class="p-3 border">
+                                Board / University
+                            </th>
+
+                            <th class="p-3 border">
+                                Year
+                            </th>
+
+                            <th class="p-3 border">
+                                Percentage
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr class="text-center hover:bg-gray-100">
+
+                            <td class="border p-3">
+                                SSC
+                            </td>
+
+                            <td class="border p-3">
+                                ABC School
+                            </td>
+
+                            <td class="border p-3">
+                                State Board
+                            </td>
+
+                            <td class="border p-3">
+                                2023
+                            </td>
+
+                            <td class="border p-3">
+                                85%
+                            </td>
+
+                        </tr>
+
+
+                        <tr class="text-center hover:bg-gray-100">
+
+                            <td class="border p-3">
+                                HSC
+                            </td>
+
+                            <td class="border p-3">
+                                XYZ College
+                            </td>
+
+                            <td class="border p-3">
+                                State Board
+                            </td>
+
+                            <td class="border p-3">
+                                2025
+                            </td>
+
+                            <td class="border p-3">
+                                80%
+                            </td
