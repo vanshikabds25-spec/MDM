@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic E-Book Library</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --sidebar: #ffffff;
+        }
+
+        body.dark {
+            --bg: #111827;
+            --card: #1f2937;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+            --border: #374151;
+            --sidebar: #1f2937;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: 0.3s;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 20px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 19px;
+            transition: 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        /* Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: calc(100vh - 81px);
+        }
+
+        /* Sidebar */
+        aside {
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            padding: 25px 18px;
+        }
+
+        .filter-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .category {
+            padding: 11px 13px;
+            border-radius: 9px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            transition: 0.2s;
+        }
+
+        .category:hover,
+        .category.active {
+            background: #eef2ff;
+            color: var(--primary);
+        }
+
+        body.dark .category:hover,
+        body.dark .category.active {
+            background: #312e81;
+            color: white;
+        }
+
+        .category span {
+            background: var(--bg);
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        /* Main */
+        main {
+            padding: 30px 5%;
+        }
+
+        .hero {
+            margin-bottom: 25px;
+        }
+
+        .hero h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: var(--muted);
+        }
+
+        /* Search */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box span {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 20px 15px 45px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 12px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        select {
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 0 15px;
+            min-width: 170px;
+            outline: none;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+        }
+
+        .stat strong {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .stat span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        /* Book Grid */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-header h3 {
+            font-size: 20px;
+        }
+
+        #resultText {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 22px;
+        }
+
+        .book-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: 0.25s;
+            position: relative;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        .book-cover {
+            height: 230px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 55px;
+            position: relative;
+        }
+
+        .cover-1 { background: linear-gradient(135deg,#2563eb,#06b6d4); }
+        .cover-2 { background: linear-gradient(135deg,#db2777,#9333ea); }
+        .cover-3 { background: linear-gradient(135deg,#059669,#14b8a6); }
+        .cover-4 { background: linear-gradient(135deg,#ea580c,#f59e0b); }
+        .cover-5 { background: linear-gradient(135deg,#4f46e5,#8b5cf6); }
+        .cover-6 { background: linear-gradient(135deg,#be123c,#e11d48); }
+        .cover-7 { background: linear-gradient(135deg,#0891b2,#0e7490); }
+        .cover-8 { background: linear-gradient(135deg,#65a30d,#16a34a); }
+
+        .bookmark {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .bookmark.saved {
+            color: #f59e0b;
+        }
+
+        .book-info {
+            padding: 17px;
+        }
+
+        .book-info h4 {
+            font-size: 17px;
+            margin-bottom: 7px;
+        }
+
+        .author {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #eef2ff;
+            color: var(--primary);
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-bottom: 13px;
+        }
+
+        body.dark .tag {
+            background: #312e81;
+            color: #c7d2fe;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .read-btn {
+            flex: 1;
+            border: none;
+            background: var(--primary);
+            color: white;
+            padding: 9px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .read-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .details-btn {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            padding: 9px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Empty state */
+        .empty {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty div {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card);
+            color: var(--text);
+            border-radius: 18px;
+            padding: 28px;
+            position: relative;
+            animation: popup 0.2s ease;
+        }
+
+        @keyframes popup {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 18px;
+            top: 15px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .modal-cover {
+            width: 120px;
+            height: 150px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 45px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 8px;
+        }
+
+        .modal-content p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            aside {
+                display: none;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            select {
+                height: 50px;
+            }
+
+            .stats {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 500px) {
+            main {
+                padding: 22px 4%;
+            }
+
+            .hero h2 {
+                font-size: 24px;
+            }
+
+            .book-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .book-cover {
+                height: 180px;
+            }
+
+            .book-info {
+                padding: 12px;
+            }
+
+            .book-info h4 {
+                font-size: 14px;
+            }
+
+            .details-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">📚</div>
+        <div>
+            <h1>E-Library</h1>
+            <p>Discover your next great read</p>
+        </div>
+    </div>
+
+    <div class="header-actions">
+        <button class="icon-btn" onclick="toggleDarkMode()" title="Toggle dark mode">
+            🌙
+        </button>
+    </div>
+</header>
+
+<div class="layout">
+
+    <!-- Sidebar -->
+    <aside>
+        <div class="filter-title">Categories</div>
+
+        <div class="category active" data-category="All">
+            All Books <span>8</span>
+        </div>
+
+        <div class="category" data-category="Technology">
+            Technology <span>2</span>
+        </div>
+
+        <div class="category" data-category="Fiction">
+            Fiction <span>2</span>
+        </div>
+
+        <div class="category" data-category="Science">
+            Science <span>1</span>
+        </div>
+
+        <div class="category" data-category="Business">
+            Business <span>1</span>
+        </div>
+
+        <div class="category" data-category="History">
+            History <span>1</span>
+        </div>
+
+        <div class="category" data-category="Self Help">
+            Self Help <span>1</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+
+        <section class="hero">
+            <h2>Explore the Digital Library</h2>
+            <p>Search, discover, filter and bookmark books from your personal collection.</p>
+        </section>
+
+        <!-- Search and author filter -->
+        <div class="search-container">
+
+            <div class="search-box">
+                <span>🔍</span>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by title, author or category..."
+                >
+            </div>
+
+            <select id="authorFilter">
+                <option value="All">All Authors</option>
+                <option value="James Clear">James Clear</option>
+                <option value="Yuval Noah Harari">Yuval Noah Harari</option>
+                <option value="Robert C. Martin">Robert C. Martin</option>
+                <option value="J.K. Rowling">J.K. Rowling</option>
+                <option value="Stephen Hawking">Stephen Hawking</option>
+                <option value="Peter Thiel">Peter Thiel</option>
+                <option value="George Orwell">George Orwell</option>
+                <option value="Cal Newport">Cal Newport</option>
+            </select>
+
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <strong id="totalBooks">8</strong>
+                <span>Total Books</span>
+            </div>
+
+            <div class="stat">
+                <strong id="bookmarkCount">0</strong>
+                <span>Bookmarked</span>
+            </div>
+
+            <div class="stat">
+                <strong id="visibleBooks">8</strong>
+                <span>Showing</span>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h3>Library Collection</h3>
+            <span id="resultText">Showing 8 books</span>
+        </div>
+
+        <!-- Books -->
+        <div class="book-grid" id="bookGrid"></div>
+
+        <div class="empty" id="emptyState">
+            <div>🔎</div>
+            <h3>No books found</h3>
+            <p>Try changing your search or filter.</p>
+        </div>
+
+    </main>
+</div>
+
+<!-- Book Modal -->
+<div class="modal" id="bookModal">
+
+    <div class="modal-content">
+
+        <button class="close" onclick="closeModal()">×</button>
+
+        <div id="modalCover" class="modal-cover">📖</div>
+
+        <h2 id="modalTitle">Book Title</h2>
+
+        <div class="author" id="modalAuthor">
+            Author
+        </div>
+
+        <span class="tag" id="modalCategory">
+            Category
+        </span>
+
+        <p id="modalDescription">
+            Book description goes here.
+        </p>
+
+        <br>
+
+        <button class="read-btn" onclick="startReading()">
+            📖 Start Reading
+        </button>
+
+    </div>
+</div>
+
+<script>
+
+    /* ---------------------------------
+       Book Database
+    --------------------------------- */
+
+    const books = [
+        {
+            id: 1,
+            title: "Atomic Habits",
+            author: "James Clear",
+            category: "Self Help",
+            cover: "cover-1",
+            icon: "🎯",
+            description:
+                "A practical guide to building good habits, breaking bad ones and making small changes that lead to remarkable results."
+        },
+        {
+            id: 2,
+            title: "Sapiens",
+            author: "Yuval Noah Harari",
+            category: "History",
+            cover: "cover-2",
+            icon: "🌍",
+            description:
+                "An exploration of the history of humankind and the major developments that shaped human societies."
+        },
+        {
+            id: 3,
+            title: "Clean Code",
+            author: "Robert C. Martin",
+            category: "Technology",
+            cover: "cover-3",
+            icon: "💻",
+            description:
+                "A guide to writing readable, maintainable and professional software through clean coding practices."
+        },
+        {
+            id: 4,
+            title: "Harry Potter",
+            author: "J.K. Rowling",
+            category: "Fiction",
+            cover: "cover-4",
+            icon: "⚡",
+            description:
+                "A fantasy adventure following a young wizard as he discovers magic, friendship and a mysterious world."
+        },
+        {
+            id: 5,
+            title: "A Brief History of Time",
+            author: "Stephen Hawking",
+            category: "Science",
+            cover: "cover-5",
+            icon: "🚀",
+            description:
+                "An accessible introduction to major concepts involving the universe, time, space and modern physics."
+        },
+        {
+            id: 6,
+            title: "Zero to One",
+            author: "Peter Thiel",
+            category: "Business",
+            cover: "cover-6",
+            icon: "💡",
+            description:
+                "A discussion of entrepreneurship, innovation and creating new businesses rather than simply copying existing ideas."
+        },
+        {
+            id: 7,
+            title: "1984",
+            author: "George Orwell",
+            category: "Fiction",
+            cover: "cover-7",
+            icon: "👁️",
+            description:
+                "A dystopian novel exploring surveillance, propaganda, political control and individual freedom."
+        },
+        {
+            id: 8,
+            title: "Deep Work",
+            author: "Cal Newport",
+            category: "Technology",
+            cover: "cover-8",
+            icon: "🧠",
+            description:
+                "A guide to focused work and strategies for improving concentration in a world filled with distractions."
+        }
+    ];
+
+
+    /* ---------------------------------
+       State
+    --------------------------------- */
+
+    let selectedCategory = "All";
+    let selectedAuthor = "All";
+    let searchTerm = "";
+
+    let bookmarks =
+        JSON.parse(localStorage.getItem("ebookBookmarks")) || [];
+
+
+    /* ---------------------------------
+       Render Books
+    --------------------------------- */
+
+    function renderBooks() {
+
+        const grid = document.getElementById("bookGrid");
+        const empty = document.getElementById("emptyState");
+
+        const filteredBooks = books.filter(book => {
+
+            const matchesSearch =
+                book.title.toLowerCase().includes(searchTerm) ||
+                book.author.toLowerCase().includes(searchTerm) ||
+                book.category.toLowerCase().includes(searchTerm);
+
+            const matchesCategory =
+                selectedCategory === "All" ||
+                book.category === selectedCategory;
+
+            const matchesAuthor =
+                selectedAuthor === "All" ||
+                book.author === selectedAuthor;
+
+            return matchesSearch &&
+                   matchesCategory &&
+                   matchesAuthor;
+        });
+
+
+        grid.innerHTML = "";
+
+        filteredBooks.forEach(book => {
+
+            const isSaved = bookmarks.includes(book.id);
+
+            const card = document.createElement("div");
+
+            card.className = "book-card";
+
+            card.innerHTML = `
+                <div class="book-cover ${book.cover}">
+                    <span>${book.icon}</span>
+
+                    <button
+                        class="bookmark ${isSaved ? "saved" : ""}"
+                        onclick="toggleBookmark(${book.id})"
+                        title="Bookmark"
+                    >
+                        ${isSaved ? "★" : "☆"}
+                    </button>
+                </div>
+
+                <div class="book-info">
+
+                    <span class="tag">
+                        ${book.category}
+                    </span>
+
+                    <h4>${book.title}</h4>
+
+                    <div class="author">
+                        By ${book.author}
+                    </div>
+
+                    <div class="book-actions">
+
+                        <button
+                            class="read-btn"
+                            onclick="openModal(${book.id})"
+                        >
+                            Read
+                        </button>
+
+                        <button
+                            class="details-btn"
+                            onclick="openModal(${book.id})"
+                        >
+                            Details
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+
+
+        empty.style.display =
+            filteredBooks.length === 0 ? "block" : "none";
+
+        document.getElementById("visibleBooks").textContent =
+            filteredBooks.length;
+
+        document.getElementById("resultText").textContent =
+            `Showing ${filteredBooks.length} book${filteredBooks.length !== 1 ? "s" : ""}`;
+
+        document.getElementById("bookmarkCount").textContent =
+            bookmarks.length;
+    }
+
+
+    /* ---------------------------------
+       Search
+    --------------------------------- */
+
+    document.getElementById("searchInput")
+        .addEventListener("input", function () {
+
+            searchTerm = this.value.toLowerCase().trim();
+
+            renderBooks();
+        });
+
+
+    /* ---------------------------------
+       Author Filter
+    --------------------------------- */
+
+    document.getElementById("authorFilter")
+        .addEventListener("change", function () {
+
+            selectedAuthor = this.value;
+
+            renderBooks();
+        });
+
+
+    /* ---------------------------------
+       Category Filter
+    --------------------------------- */
+
+    document.querySelectorAll(".category")
+        .forEach(category => {
+
+            category.addEventListener("click", function () {
+
+                document
+                    .querySelectorAll(".category")
+                    .forEach(item =>
+                        item.classList.remove("active")
+                    );
+
+                this.classList.add("active");
+
+                selectedCategory =
+                    this.dataset.category;
+
+                renderBooks();
+            });
+
+        });
+
+
+    /* ---------------------------------
+       Bookmark
+    --------------------------------- */
+
+    function toggleBookmark(id) {
+
+        if (bookmarks.includes(id)) {
+
+            bookmarks =
+                bookmarks.filter(bookId => bookId !== id);
+
+        } else {
+
+            bookmarks.push(id);
+        }
+
+        localStorage.setItem(
+            "ebookBookmarks",
+            JSON.stringify(bookmarks)
+        );
+
+        renderBooks();
+    }
+
+
+    /* ---------------------------------
+       Modal
+    --------------------------------- */
+
+    function openModal(id) {
+
+        const book =
+            books.find(book => book.id === id);
+
+        document.getElementById("modalTitle").textContent =
+            book.title;
+
+        document.getElementById("modalAuthor").textContent =
+            "By " + book.author;
+
+        document.getElementById("modalCategory").textContent =
+            book.category;
+
+        document.getElementById("modalDescription").textContent =
+            book.description;
+
+        const cover =
+            document.getElementById("modalCover");
+
+        cover.className =
+            "modal-cover " + book.cover;
+
+        cover.textContent = book.icon;
+
+        document.getElementById("bookModal")
+            .classList.add("show");
+    }
+
+
+    function closeModal() {
+
+        document.getElementById("bookModal")
+            .classList.remove("show");
+    }
+
+
+    document.getElementById("bookModal")
+        .addEventListener("click", function(event) {
+
+            if (event.target === this) {
+                closeModal();
+            }
+
+        });
+
+
+    /* ---------------------------------
+       Reading Button
+    --------------------------------- */
+
+    function startReading() {
+
+        alert(
+            "📖 Reading mode opened!\n\n" +
+            "You can connect this button to your PDF/e-book reader."
+        );
+    }
+
+
+    /* ---------------------------------
+       Dark Mode
+    --------------------------------- */
+
+    function toggleDarkMode() {
+
+        document.body.classList.toggle("dark");
+
+        const dark =
+            document.body.classList.contains("dark");
+
+        localStorage.setItem("darkMode", dark);
+    }
+
+
+    if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark");
+    }
+
+
+    /* ---------------------------------
+       Initial Render
+    --------------------------------- */
+
+    renderBooks();
+
+</script>
+
+</body>
+</html>
